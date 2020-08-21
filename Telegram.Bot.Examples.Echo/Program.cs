@@ -16,36 +16,44 @@ namespace Telegram.Bot.Examples.Echo
     {
         private static TelegramBotClient Bot;
 
+      
+
         public static async Task Main()
         {
-#if USE_PROXY
-            var Proxy = new WebProxy(Configuration.Proxy.Host, Configuration.Proxy.Port) { UseDefaultCredentials = true };
-            Bot = new TelegramBotClient(Configuration.BotToken, webProxy: Proxy);
-#else
+//#if USE_PROXY
+            //var Proxy = new WebProxy(Configuration.Proxy.Host, Configuration.Proxy.Port) { UseDefaultCredentials = true };
+            //Bot = new TelegramBotClient(Configuration.BotToken, webProxy: Proxy);
+//#else
             Bot = new TelegramBotClient(Configuration.BotToken);
-#endif
+//#endif
 
             var me = await Bot.GetMeAsync();
             Console.Title = me.Username;
 
+            Bot.OnUpdate += BotOnUpdate;
             Bot.OnMessage += BotOnMessageReceived;
             Bot.OnMessageEdited += BotOnMessageReceived;
             Bot.OnCallbackQuery += BotOnCallbackQueryReceived;
             Bot.OnInlineQuery += BotOnInlineQueryReceived;
             Bot.OnInlineResultChosen += BotOnChosenInlineResultReceived;
             Bot.OnReceiveError += BotOnReceiveError;
-
+         
             Bot.StartReceiving(Array.Empty<UpdateType>());
             Console.WriteLine($"Start listening for @{me.Username}");
 
             Console.ReadLine();
             Bot.StopReceiving();
+
+
         }
+
+   
 
         private static async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
         {
+            //принимает обычные сообщения, но не от канала, возможно нужна какая-то дополнительная функция
             var message = messageEventArgs.Message;
-            if (message == null || message.Type != MessageType.Text)
+            if (message == null || message.Type != MessageType.Text)//тут убрать, возможен не только текст
                 return;
 
             switch (message.Text.Split(' ').First())
@@ -106,7 +114,8 @@ namespace Telegram.Bot.Examples.Echo
                 );
             }
 
-            static async Task SendReplyKeyboard(Message message)
+          
+                static async Task SendReplyKeyboard(Message message)
             {
                 var replyKeyboardMarkup = new ReplyKeyboardMarkup(
                     new KeyboardButton[][]
@@ -138,6 +147,7 @@ namespace Telegram.Bot.Examples.Echo
                     caption: "Nice Picture"
                 );
             }
+         
 
             static async Task RequestContactAndLocation(Message message)
             {
@@ -166,6 +176,8 @@ namespace Telegram.Bot.Examples.Echo
                     replyMarkup: new ReplyKeyboardRemove()
                 );
             }
+
+           
         }
 
         // Process Inline Keyboard callback data
@@ -221,6 +233,20 @@ namespace Telegram.Bot.Examples.Echo
                 receiveErrorEventArgs.ApiRequestException.ErrorCode,
                 receiveErrorEventArgs.ApiRequestException.Message
             );
+        }
+        public static void BotOnUpdate(object sender, UpdateEventArgs updateEventArgs)
+        {
+            if (updateEventArgs.Update.Type == UpdateType.ChannelPost)
+            {
+                Message post = updateEventArgs.Update.ChannelPost;
+
+                //TODO: Store channel post
+            }
+            else if (updateEventArgs.Update.Type == UpdateType.EditedChannelPost)
+            {
+                Message editedPost = updateEventArgs.Update.EditedChannelPost;
+                //TODO: Store edited channel post
+            }
         }
     }
 }
