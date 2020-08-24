@@ -313,6 +313,8 @@ namespace Telegram.Bot.Examples.Echo
             if (updateEventArgs.Update.Type == UpdateType.ChannelPost)
             {
                 string postFile = "";
+                string postFileVidio = "";
+                string postFileDocument = "";
                     Message post = updateEventArgs.Update.ChannelPost;
                 if (post.Type == MessageType.Photo)
                 {
@@ -326,16 +328,46 @@ namespace Telegram.Bot.Examples.Echo
                        
                     }
                     
-                }else if(post.Type == MessageType.Video && post.Type == MessageType.Document)
+                }
+                else if(post.Type == MessageType.Video )
                  {
                     //Фото и видео нужно хранить в байтах
-                    //Types.File vidio = await Bot.GetFileAsync(post.Video..FileId);
+                    Types.File vidio = await Bot.GetFileAsync(post.Video.FileId);
+                    string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + vidio.FilePath;
+                    using (WebClient client = new WebClient())
+                    {
+                        byte[] vidioByte = client.DownloadData(download_url);
+                        postFileVidio = Convert.ToBase64String(vidioByte, 0, vidioByte.Length,
+                                        Base64FormattingOptions.InsertLineBreaks);
 
-                    //Types.File photo = await Bot.GetFileAsync(post.Document.ToString.FileId);
+                    }
+                     //Types.File photo = await Bot.GetFileAsync(post.Document.ToString.FileId);
                     //string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
                     //string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
+
+
+
 
                 }
+                else if (post.Type == MessageType.Document)
+                {
+                    //Фото и видео нужно хранить в байтах
+                    Types.File document = await Bot.GetFileAsync(post.Document.FileId);
+                    string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + document.FilePath;
+                    using (WebClient client = new WebClient())
+                    {
+                        byte[] DocumentByte = client.DownloadData(download_url);
+                        postFileDocument = Convert.ToBase64String(DocumentByte, 0, DocumentByte.Length,
+                                        Base64FormattingOptions.InsertLineBreaks);
+
+                    }
+         
+
+
+                }
+
+
+
                 //TODO: Store channel post
                 //записать эти поля в базу:
                 //post.MessageId - Id поста
