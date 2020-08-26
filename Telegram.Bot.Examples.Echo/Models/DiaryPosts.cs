@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Telegram.Bot.Examples.Echo
+namespace Telegram.Bot.Examples.Echo.Models
 {
-    public partial class RecordOfTelegramsBott
+    public partial class DiaryPosts
     {
         public int Id { get; set; }
         public string Text { get; set; }
         public string Fiile { get; set; }
-        public DateTime DateCreate { get; set; }
+        public DateTime? DateCreate { get; set; }
+        public byte[] Filedata { get; set; }
     }
 }
