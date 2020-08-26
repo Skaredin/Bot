@@ -15,7 +15,7 @@ namespace Telegram.Bot.Examples.Echo
     public static class Program
     {
         private static TelegramBotClient Bot;
-
+        private static u436263_100tztestContext db = new u436263_100tztestContext();
       
 
         public static async Task Main()
@@ -310,6 +310,10 @@ namespace Telegram.Bot.Examples.Echo
 
     public static async void BotOnUpdate(object sender, UpdateEventArgs updateEventArgs)
         {
+            try
+            {
+
+    
             if (updateEventArgs.Update.Type == UpdateType.ChannelPost)
             {
                 string postFile = "";
@@ -318,19 +322,31 @@ namespace Telegram.Bot.Examples.Echo
                     Message post = updateEventArgs.Update.ChannelPost;
                 if (post.Type == MessageType.Photo)
                 {
-                        Types.File photo = await Bot.GetFileAsync(post.Photo.LastOrDefault().FileId);
+                    Types.File photo = await Bot.GetFileAsync(post.Photo.LastOrDefault().FileId );
                     string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
                     using (WebClient client = new WebClient())
                     {
-                       byte[] photoByte = client.DownloadData(download_url);
+                        byte[] photoByte = client.DownloadData(download_url);
                         postFile = Convert.ToBase64String(photoByte, 0, photoByte.Length,
                                         Base64FormattingOptions.InsertLineBreaks);
-                       
+                            
+                           
+                    }
+                        
+
+                        DiaryPosts diary = new DiaryPosts()
+                            {
+                                Text = post.Text,
+                                Fiile = postFile,
+                                DateCreate = DateTime.Now,
+                            };
+                            db.DiaryPosts.Add(diary);
+                            await db.SaveChangesAsync();
+                        
                     }
                     
-                }
-                else if(post.Type == MessageType.Video )
-                 {
+                    else if (post.Type == MessageType.Video)
+                {
                     //Фото и видео нужно хранить в байтах
                     Types.File vidio = await Bot.GetFileAsync(post.Video.FileId);
                     string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + vidio.FilePath;
@@ -340,8 +356,19 @@ namespace Telegram.Bot.Examples.Echo
                         postFileVidio = Convert.ToBase64String(vidioByte, 0, vidioByte.Length,
                                         Base64FormattingOptions.InsertLineBreaks);
 
+                      
+                        DiaryPosts diary = new DiaryPosts()
+                        {
+                            Text = post.Text,
+                            Fiile = postFileVidio,
+                            DateCreate = DateTime.Now,
+                        };
+                        db.DiaryPosts.Add(diary);
+                        await db.SaveChangesAsync();
                     }
-                     //Types.File photo = await Bot.GetFileAsync(post.Document.ToString.FileId);
+                    
+                   
+                    //Types.File photo = await Bot.GetFileAsync(post.Document.ToString.FileId);
                     //string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
                     //string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
 
@@ -353,20 +380,50 @@ namespace Telegram.Bot.Examples.Echo
                 {
                     //Фото и видео нужно хранить в байтах
                     Types.File document = await Bot.GetFileAsync(post.Document.FileId);
-                    string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + document.FilePath;
-                    using (WebClient client = new WebClient())
-                    {
-                        byte[] DocumentByte = client.DownloadData(download_url);
-                        postFileDocument = Convert.ToBase64String(DocumentByte, 0, DocumentByte.Length,
-                                        Base64FormattingOptions.InsertLineBreaks);
+                        string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + document.FilePath;
+                        using (WebClient client = new WebClient())
+                        {
+                            byte[] DocumentByte = client.DownloadData(download_url);
+
+
+                            DiaryPosts diary = new DiaryPosts()
+                            {
+                                Text = post.Text,
+                                //Fiile = postFileDocument,
+                                 = ,
+                                DateCreate = DateTime.Now,
+                            };
+                            db.DiaryPosts.Add(diary);
+                            await db.SaveChangesAsync();
+
+
+
+                        }
+
+
+
+
+
+
+
+
+
+
+
 
                     }
-         
+                else if (post.Type == MessageType.Text)
+                {
+                    DiaryPosts diary = new DiaryPosts()
+                    {
+                        Text = post.Text,
+                        DateCreate = DateTime.Now,
+                    };
 
-
+                    db.DiaryPosts.Add(diary);
+                    await db.SaveChangesAsync();
                 }
-
-
+                
 
                 //TODO: Store channel post
                 //записать эти поля в базу:
@@ -393,6 +450,12 @@ namespace Telegram.Bot.Examples.Echo
 
                 }
                 //TODO: Store edited channel post
+            }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
 
         }
