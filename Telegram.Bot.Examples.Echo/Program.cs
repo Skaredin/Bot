@@ -336,7 +336,7 @@ namespace Telegram.Bot.Examples.Echo
 
                         DiaryPosts diary = new DiaryPosts()
                         {
-                            Text = post.Text,
+                           
                             Fiile = postFile,
                             DateCreate = DateTime.Now,
                         };
@@ -350,22 +350,22 @@ namespace Telegram.Bot.Examples.Echo
                         //Фото и видео нужно хранить в байтах
                         Types.File vidio = await Bot.GetFileAsync(post.Video.FileId);
                         string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + vidio.FilePath;
-                        using (WebClient client = new WebClient())
-                        {
-                            byte[] vidioByte = client.DownloadData(download_url);
+                        //using (WebClient client = new WebClient())
+                        //{
+                        //    //byte[] vidioByte = client.DownloadData(download_url);
                            
 
 
-                            DiaryPosts diary = new DiaryPosts()
-                            {
-                                Text = post.Text,
-                                Filedata = vidioByte,
-                                DateCreate = DateTime.Now,
-                            };
-                            db.DiaryPosts.Add(diary);
-                            await db.SaveChangesAsync();
-                        }
-
+                            
+                        //}
+                        DiaryPosts diary = new DiaryPosts()
+                        {
+                           
+                            Video = download_url,
+                            DateCreate = DateTime.Now,
+                        };
+                        db.DiaryPosts.Add(diary);
+                        await db.SaveChangesAsync();
 
                         //Types.File photo = await Bot.GetFileAsync(post.Document.ToString.FileId);
                         //string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
@@ -387,7 +387,7 @@ namespace Telegram.Bot.Examples.Echo
 
                             DiaryPosts diary = new DiaryPosts()
                             {
-                                Text = post.Text,
+                             
                              
                                 Filedata = DocumentByte,
                                 DateCreate = DateTime.Now,

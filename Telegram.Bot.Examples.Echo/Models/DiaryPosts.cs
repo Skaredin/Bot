@@ -10,5 +10,6 @@ namespace Telegram.Bot.Examples.Echo.Models
         public string Fiile { get; set; }
         public DateTime? DateCreate { get; set; }
         public byte[] Filedata { get; set; }
+        public string Video { get; set; }
     }
 }

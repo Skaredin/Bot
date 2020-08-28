@@ -43,6 +43,8 @@ namespace Telegram.Bot.Examples.Echo.Models
                 entity.Property(e => e.Filedata).HasColumnName("filedata");
 
                 entity.Property(e => e.Text).HasColumnName("text");
+
+                entity.Property(e => e.Video).HasColumnName("video");
             });
 
             OnModelCreatingPartial(modelBuilder);
