@@ -384,12 +384,12 @@ namespace Telegram.Bot.Examples.Echo
                         {
                             byte[] DocumentByte = client.DownloadData(download_url);
 
-
+                            // из post.Document надо определять имя файла и сохранять в БД, скорее всего
+                           
                             DiaryPosts diary = new DiaryPosts()
                             {
-                             
-                             
-                                Filedata = DocumentByte,
+                                FileName = post.Document.FileName,
+                            Filedata = DocumentByte,
                                 DateCreate = DateTime.Now,
                             };
                             db.DiaryPosts.Add(diary);

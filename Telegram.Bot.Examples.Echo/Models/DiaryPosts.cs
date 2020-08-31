@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Telegram.Bot.Examples.Echo.Models
@@ -9,6 +9,7 @@ namespace Telegram.Bot.Examples.Echo.Models
         public string Text { get; set; }
         public string Fiile { get; set; }
         public DateTime? DateCreate { get; set; }
+        public string FileName { get; set; }
         public byte[] Filedata { get; set; }
         public string Video { get; set; }
     }
