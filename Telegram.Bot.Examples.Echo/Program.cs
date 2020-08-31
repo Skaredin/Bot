@@ -398,18 +398,6 @@ namespace Telegram.Bot.Examples.Echo
 
 
                         }
-
-
-
-
-
-
-
-
-
-
-
-
                     }
                     else if (post.Type == MessageType.Text)
                     {
@@ -446,8 +434,100 @@ namespace Telegram.Bot.Examples.Echo
                                             Base64FormattingOptions.InsertLineBreaks);
 
                         }
+                        DiaryPosts diary = new DiaryPosts()
+                        {
+
+                            Fiile = postFile,
+                            DateCreate = DateTime.Now,
+                        };
+                        db.DiaryPosts.Add(diary);
+                        await db.SaveChangesAsync();
 
                     }
+                    else if (editedPost.Type == MessageType.Video)
+                    {
+                        //Фото и видео нужно хранить в байтах
+                        Types.File vidio = await Bot.GetFileAsync(editedPost.Video.FileId);
+                        string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + vidio.FilePath;
+                        //using (WebClient client = new WebClient())
+                        //{
+                        //    //byte[] vidioByte = client.DownloadData(download_url);
+
+
+
+
+                        //}
+                        DiaryPosts diary = new DiaryPosts()
+                        {
+
+                            Video = download_url,
+                            DateCreate = DateTime.Now,
+                        };
+                        db.DiaryPosts.Add(diary);
+                        await db.SaveChangesAsync();
+
+                        //Types.File photo = await Bot.GetFileAsync(post.Document.ToString.FileId);
+                        //string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
+                        //string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + photo.FilePath;
+
+
+
+
+                    }
+                    else if (editedPost.Type == MessageType.Document)
+                    {
+                        //Фото и видео нужно хранить в байтах
+                        Types.File document = await Bot.GetFileAsync(editedPost.Document.FileId);
+                        string download_url = $"https://api.telegram.org/file/bot{Configuration.BotToken}/" + document.FilePath;
+                        using (WebClient client = new WebClient())
+                        {
+                            byte[] DocumentByte = client.DownloadData(download_url);
+
+
+                            DiaryPosts diary = new DiaryPosts()
+                            {
+
+
+                                Filedata = DocumentByte,
+                                DateCreate = DateTime.Now,
+                            };
+                            db.DiaryPosts.Add(diary);
+                            await db.SaveChangesAsync();
+
+
+
+                        }
+                    }
+
+
+
+
+
+
+
+
+                    else if (editedPost.Type == MessageType.Text)
+                    {
+                        DiaryPosts diary = new DiaryPosts()
+                        {
+                            Text = editedPost.Text,
+                            DateCreate = DateTime.Now,
+                        };
+
+                        db.DiaryPosts.Add(diary);
+                        await db.SaveChangesAsync();
+                    }
+
+
+
+
+
+
+
+
+
+
+
                     //TODO: Store edited channel post
                 }
             }
